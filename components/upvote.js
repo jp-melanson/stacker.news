@@ -228,6 +228,43 @@ export default function UpVote ({ item, className }) {
 
   const fillColor = hover || pending ? nextColor : color
 
+  const handleModalClosed = () => {
+    setHover(false)
+  }
+
+  const handleLongPress = (e) => {
+    if (!item) return
+
+    // we can't tip ourselves
+    if (disabled) {
+      return
+    }
+
+    setTipShow(false)
+    showModal(onClose =>
+      <ItemAct onClose={onClose} itemId={item.id} />, { onClose: handleModalClosed })
+  }
+
+  const handleShortPress = () => {
+    if (me) {
+      if (!item) return
+
+      // we can't tip ourselves
+      if (disabled) {
+        return
+      }
+
+      if (meSats) {
+        setVoteShow(false)
+      } else {
+        setTipShow(true)
+      }
+
+      zap({ item, me })
+    } else {
+      showModal(onClose => <ItemAct onClose={onClose} itemId={item.id} act={act} />, { onClose: handleModalClosed })
+    }
+  }
   return (
     <div ref={ref} className='upvoteParent'>
       <LongPressable
